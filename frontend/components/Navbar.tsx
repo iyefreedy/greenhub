@@ -58,13 +58,13 @@ export default function Navbar() {
                             />
                         </div>
                         <Link
-                            href={"/"}
+                            href={"/register"}
                             className="hidden lg:inline-block w-20 bg-emerald-400 text-center py-1.5 rounded-full text-gray-100 text-sm lg:text-base"
                         >
                             Sign Up
                         </Link>
                         <Link
-                            href={"/"}
+                            href={"/login"}
                             className="hidden text-sm lg:inline-block w-20 border border-emerald-400 text-center py-1.5 rounded-full lg:text-base"
                         >
                             Sign In
@@ -104,13 +104,13 @@ export default function Navbar() {
                     <SearchForm />
 
                     <Link
-                        href={"/"}
+                        href={"/register"}
                         className="block bg-emerald-400 text-center rounded-full py-1.5 mb-2 text-gray-100"
                     >
                         Sign Up
                     </Link>
                     <Link
-                        href={"/"}
+                        href={"/login"}
                         className="block border border-emerald-400 text-center rounded-full py-1.5"
                     >
                         Sign In

@@ -12,6 +12,8 @@ mysql = "*"
 python-dotenv = "*"
 gunicorn = "*"
 cerberus = "*"
+flask-login = "*"
+flask-cors = "*"
 
 [dev-packages]
 

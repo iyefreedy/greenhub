@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import auth from "@/lib/auth";
 
 const author = localFont({
   src: [
@@ -32,25 +33,29 @@ const author = localFont({
     {
       path: '../assets/fonts/Author-Bold.otf',
       weight: '700',
-
     },
   ],
 });
+
+
 
 export const metadata: Metadata = {
   title: "Green Hub",
   description: "Large community where every local seller gathered.",
 };
 
-export default function RootLayout({
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const user = await auth()
+
   return (
     <html lang="en">
       <body className={author.className}>
-        <Navbar />
         {children}
       </body>
     </html>

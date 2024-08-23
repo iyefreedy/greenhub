@@ -6,14 +6,18 @@ import Image from "next/image";
 import { useState } from "react";
 import { Bars3Icon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import greenHubLogo from "@/assets/images/green-hub.svg"
-import SearchForm from "./SearchFrom";
+import SearchForm from "./SearchForm";
+import { User } from "@/types";
 
-export default function Navbar() {
+
+export default function Navbar({ user }: { user: User | null }) {
+
     const [isOpen, setIsOpen] = useState(false);
+
     return (
         <>
-            <nav className="px-4 bg-emerald-50">
-                <div className="h-20 flex justify-between items-center">
+            <nav className="px-4 bg-emerald-50 mx-auto">
+                <div className="h-20 flex justify-between items-center container">
                     <div className="flex items-center">
                         <Link href={"/"} className="flex items-center">
                             <Image
@@ -50,31 +54,42 @@ export default function Navbar() {
                             <Bars3Icon className="h-6 w-6 fill-emerald-400" />
                         </button>
                         <div className="relative hidden lg:block">
-                            <MagnifyingGlassIcon className="h-5 w-5 stroke-emerald-400 absolute right-3 top-2" />
-                            <input
-                                type="text"
-                                className="w-full outline-none text-sm font-light rounded-full py-1.5 px-3 border border-emerald-200 focus:ring-1 focus:ring-emerald-300 transition-shadow"
-                                placeholder="Search..."
-                            />
+                            <form action="/explore" method="get">
+                                <MagnifyingGlassIcon className="h-5 w-5 stroke-emerald-400 absolute right-3 top-2" />
+                                <input
+                                    type="text"
+                                    className="w-full outline-none text-sm font-light rounded-full py-1.5 px-3 border border-gray-200 focus:ring-1 focus:ring-emerald-300 transition-shadow focus:border-emerald-200"
+                                    placeholder="Search..."
+                                    name="query"
+                                />
+                            </form>
                         </div>
-                        <Link
-                            href={"/register"}
-                            className="hidden lg:inline-block w-20 bg-emerald-400 text-center py-1.5 rounded-full text-gray-100 text-sm lg:text-base"
+                        {user ? <Link
+                            href={"/profile"}
+                            className="hidden lg:inline-block w-10 h-10 bg-emerald-400 text-center p-2 rounded-full text-gray-100 text-sm lg:text-base"
                         >
-                            Sign Up
+                            {user.first_name.charAt(0)}
                         </Link>
-                        <Link
-                            href={"/login"}
-                            className="hidden text-sm lg:inline-block w-20 border border-emerald-400 text-center py-1.5 rounded-full lg:text-base"
-                        >
-                            Sign In
-                        </Link>
+                            : <>
+                                <Link
+                                    href={"/register"}
+                                    className="hidden lg:inline-block w-20 bg-emerald-400 text-center py-1.5 rounded-full text-gray-100 text-sm lg:text-base"
+                                >
+                                    Sign Up
+                                </Link>
+                                <Link
+                                    href={"/login"}
+                                    className="hidden text-sm lg:inline-block w-20 border border-emerald-400 text-center py-1.5 rounded-full lg:text-base"
+                                >
+                                    Sign In
+                                </Link>
+                            </>}
                     </div>
                 </div>
             </nav>
 
             <div
-                className={`absolute top-0 left-0 w-full shadow-lg rounded-b-2xl bg-white transition-transform z-50 ${isOpen ? "translate-y-0" : "-translate-y-full"
+                className={`absolute top-0 left-0 w-full shadow-lg rounded-b-2xl bg-white transition-transform z-50 lg:hidden ${isOpen ? "translate-y-0" : "-translate-y-full"
                     }`}
             >
                 <div className="p-6">
@@ -102,19 +117,26 @@ export default function Navbar() {
                     </ul>
 
                     <SearchForm />
-
-                    <Link
-                        href={"/register"}
+                    {user ? <Link
+                        href={"/profile"}
                         className="block bg-emerald-400 text-center rounded-full py-1.5 mb-2 text-gray-100"
                     >
-                        Sign Up
-                    </Link>
-                    <Link
-                        href={"/login"}
-                        className="block border border-emerald-400 text-center rounded-full py-1.5"
-                    >
-                        Sign In
-                    </Link>
+                        {`${user.first_name} ${user.last_name}`}
+                    </Link> :
+                        <>
+                            <Link
+                                href={"/register"}
+                                className="block bg-emerald-400 text-center rounded-full py-1.5 mb-2 text-gray-100"
+                            >
+                                Sign Up
+                            </Link>
+                            <Link
+                                href={"/login"}
+                                className="block border border-emerald-400 text-center rounded-full py-1.5"
+                            >
+                                Sign In
+                            </Link>
+                        </>}
                 </div>
             </div>
         </>

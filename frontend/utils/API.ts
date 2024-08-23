@@ -1,4 +1,5 @@
-import { LoginCredential, RegisterCredential } from "@/types";
+import { CartProduct, LoginCredential, RegisterCredential } from "@/types";
+import { cookies } from "next/headers";
 
 export default {
   async register(credential: RegisterCredential) {
@@ -69,6 +70,25 @@ export default {
   },
   async getProduct(id: number) {
     const response = await fetch(`http://localhost:5000/api/products/${id}`);
+
+    return response;
+  },
+  async createOrder(
+    products: {
+      product: number;
+      quantity: number;
+      price: number;
+    }[],
+    accessToken?: string
+  ) {
+    const response = await fetch(`http://localhost:5000/api/transactions`, {
+      method: "POST",
+      body: JSON.stringify(products),
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return response;
   },

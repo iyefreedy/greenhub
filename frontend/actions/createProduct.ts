@@ -1,25 +1,8 @@
 "use server";
 
 import API from "@/utils/API";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { z } from "zod";
-
-// This input type is :
-type TestInputSchema = {
-  image: any;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  is_premium?: string;
-};
-
-/* This output type is :
-type TestOutputSchema = {
-    name: string;
-}
-*/
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const ACCEPTED_FILE_TYPES = ["image/png"];

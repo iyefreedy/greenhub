@@ -1,14 +1,16 @@
 
 import sys
 import os
+from functools import reduce
 from flask import Blueprint, request, jsonify
 from cerberus import Validator
 from flask_jwt_extended import create_access_token, jwt_required, current_user
 from werkzeug.utils import secure_filename
 
+from src.utils import generate_invoice_number
 from src.extension import db
 from src.schema import register_schema, login_schema
-from src.models import User, Seller, Product
+from src.models import User, Seller, Product, Transaction, TransactionDetail
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 UPLOAD_FOLDER = os.path.join(os.path.dirname(
@@ -175,3 +177,42 @@ def create_product():
     except Exception as e:
         db.session.rollback()
         return jsonify(error=str(e)), 500
+
+
+@api_blueprint.post("transactions")
+@jwt_required()
+def create_transaction():
+    data: dict = request.get_json()
+
+    try:
+        last_transaction = Transaction.query.order_by(
+            db.desc(Transaction.created_at)).first()
+
+        total_price = reduce(
+            (lambda x, y: x + (float(y['price']) * int(y['quantity']))), data.get('products'), 0)
+
+        transaction = Transaction(
+            user_id=current_user.id,
+            total_price=total_price,
+            invoice_number=generate_invoice_number(
+                last_invoice_number=last_transaction.invoice_number if last_transaction is not None else None),
+        )
+        db.session.add(transaction)
+
+        db.session.flush()
+        for product in data.get('products'):
+            transaction_detail = TransactionDetail(
+                transaction_id=transaction.id,
+                product_id=product['id'],
+                quantity=product['quantity'],
+                price=product['price']
+            )
+            db.session.add(transaction_detail)
+
+        db.session.commit()
+
+        return jsonify(message="Success"), 201
+    except Exception as e:
+        db.session.rollback()
+        print(str(e), file=sys.stderr)
+        return jsonify(message=str(e)), 500

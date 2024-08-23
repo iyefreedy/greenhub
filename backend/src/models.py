@@ -1,4 +1,5 @@
 import bcrypt
+import enum
 from datetime import datetime
 from src.extension import db
 
@@ -87,3 +88,44 @@ class Product(db.Model):
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
+
+
+class PaymentStatus(enum.Enum):
+    PAID = 'paid'
+    UNPAID = 'unpaid'
+    CANCEL = 'cancel'
+
+
+class Transaction(db.Model):
+    __tablename__ = "transactions"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.ForeignKey("users.id"))
+    invoice_number = db.Column(db.String(20), unique=True, nullable=False)
+    status = db.Column(db.String, default='unpaid')
+    total_price = db.Column(db.Float(10, 2), nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.now)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "status": self.status,
+            "invoice_number": self.invoice_number,
+            "total_price": self.total_price,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }
+
+
+class TransactionDetail(db.Model):
+    __tablename__ = 'transaction_details'
+
+    id = db.Column(db.Integer, primary_key=True,
+                   nullable=False, autoincrement=True)
+    transaction_id = db.Column(db.ForeignKey('transactions.id'))
+    product_id = db.Column(db.ForeignKey('products.id'))
+    price = db.Column(db.Float(10, 2), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)

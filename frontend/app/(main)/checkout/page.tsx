@@ -33,8 +33,12 @@ export default function CheckoutPage() {
       body: JSON.stringify({ products }),
     });
 
-    if (!res.ok) {
+    if (!res.ok && res.status === 401) {
       router.push("/login");
+    }
+
+    if (res.ok) {
+      router.push("/orders");
     }
   };
 

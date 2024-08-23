@@ -12,5 +12,5 @@ export async function POST(req: Request) {
 
   console.log(result);
 
-  return Response.json({ message: "Success" });
+  return Response.json({ message: "Success" }, { status: res.status });
 }

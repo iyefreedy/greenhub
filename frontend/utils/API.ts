@@ -92,4 +92,28 @@ export default {
 
     return response;
   },
+  async getTransactions(accessToken?: string) {
+    const response = await fetch(`http://localhost:5000/api/transactions`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    console.log(response);
+
+    return response;
+  },
+  async payTransaction(transactionId: number, accessToken?: string) {
+    const response = await fetch(
+      `http://localhost:5000/api/transactions/${transactionId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ status: "paid" }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response;
+  },
 };

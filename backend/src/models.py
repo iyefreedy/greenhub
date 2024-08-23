@@ -112,8 +112,8 @@ class Transaction(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "status": self.status,
             "invoice_number": self.invoice_number,
+            "status": self.status,
             "total_price": self.total_price,
             "created_at": self.created_at,
             "updated_at": self.updated_at

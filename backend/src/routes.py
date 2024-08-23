@@ -216,3 +216,31 @@ def create_transaction():
         db.session.rollback()
         print(str(e), file=sys.stderr)
         return jsonify(message=str(e)), 500
+
+
+@api_blueprint.get("transactions")
+@jwt_required()
+def get_transactions():
+    try:
+        transactions = Transaction.query.filter_by(
+            user_id=current_user.id).order_by(db.desc(Transaction.created_at)).all()
+        print(transactions, file=sys.stderr)
+
+        return jsonify([transaction.serialize() for transaction in transactions]), 200
+    except Exception as e:
+        return jsonify(message=str(e)), 500
+
+
+@api_blueprint.put("transactions/<id>")
+@jwt_required()
+def update_transactions(id):
+    try:
+        transaction = Transaction.query.filter_by(id=id).first()
+        transaction.status = 'paid'
+
+        db.session.commit()
+
+        return transaction.serialize(), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(message=str(e)), 500
